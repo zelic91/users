@@ -1,0 +1,21 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Users
+  description: General user service for mobile applications and games
+
+host: api.zeliclabs.com
+basePath: /v1
+securityDefinitions:
+  UserSecurity:
+    type: basic
+
+paths:
+  /users:
+    get:
+      security:
+        - UserSecurity: []
+      description: Return a list of users
+      responses:
+        200:
+          description: Success
