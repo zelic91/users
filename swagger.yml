@@ -6,16 +6,79 @@ info:
 
 host: api.zeliclabs.com
 basePath: /v1
+
+consumes:
+  - application/json
+  - application/JSON
+produces:
+  - application/json
+  - application/JSON
+
 securityDefinitions:
-  UserSecurity:
-    type: basic
+  Authorization:
+    name: Authorization
+    type: apiKey
+    in: header
 
 paths:
+  /profile:
+    get:
+      security:
+        - Authorization: []
+      description: Return profile of the current user
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Profile"
+        400:
+          $ref: "#/responses/400"
+        501:
+          $ref: "#/responses/501"
+
   /users:
     get:
       security:
-        - UserSecurity: []
+        - Authorization: []
       description: Return a list of users
       responses:
         200:
           description: Success
+        400:
+          $ref: "#/responses/400"
+        501:
+          $ref: "#/responses/501"
+
+definitions:
+  Profile:
+    type: object
+    properties:
+      username:
+        type: string
+      email:
+        type: string
+  User:
+    type: object
+    properties:
+      username:
+        type: string
+      email:
+        type: string
+      extI_id:
+        type: string
+
+responses:
+  400:
+    description: Invalid request
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
+  501:
+    description: Not implemented
+    schema:
+      type: object
+      properties:
+        message:
+          type: string
