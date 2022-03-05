@@ -1,18 +1,20 @@
 package swagger
 
 import (
+	"zelic91/users/auth"
 	"zelic91/users/gen/models"
 	"zelic91/users/gen/restapi/operations"
+	"zelic91/users/gen/restapi/operations/profile"
 
 	"github.com/go-openapi/runtime/middleware"
 )
 
-func Profile(api *operations.UsersAPI) {
-	api.GetProfileHandler = operations.GetProfileHandlerFunc(func(gpp operations.GetProfileParams, u *models.User) middleware.Responder {
-		profile := models.Profile{
+func SetupProfile(api *operations.UsersAPI) {
+	api.ProfileGetProfileHandler = profile.GetProfileHandlerFunc(func(gpp profile.GetProfileParams, u *auth.UserClaims) middleware.Responder {
+		resp := models.Profile{
 			Email:    "thuongnh.uit@gmail.com",
 			Username: "Thuong Dep Trai",
 		}
-		return operations.NewGetProfileOK().WithPayload(&profile)
+		return profile.NewGetProfileOK().WithPayload(&resp)
 	})
 }

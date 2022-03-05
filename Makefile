@@ -6,7 +6,7 @@ setup:
 
 swagger: clean
 	mkdir ./gen
-	swagger -q generate server --exclude-main -t ./gen -f swagger.yml -P zelic91/users/models.User
+	swagger -q generate server --exclude-main -t ./gen -f swagger.yml -P zelic91/users/auth.UserClaims
 
 run:
 	go run .
