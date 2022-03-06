@@ -47,7 +47,7 @@ paths:
         500:
           $ref: "#/responses/500"
 
-  /signin_facebook:
+  /signin-facebook:
     post:
       operationId: signInFacebook
       tags:
@@ -68,7 +68,7 @@ paths:
         500:
           $ref: "#/responses/500"
 
-  /signin_apple:
+  /signin-apple:
     post:
       operationId: signInApple
       tags:

@@ -2,8 +2,10 @@ package auth
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"strings"
+	"zelic91/users/apple"
 	"zelic91/users/gen/models"
 
 	"github.com/golang-jwt/jwt"
@@ -68,6 +70,54 @@ func (s AuthService) SignIn(ctx context.Context, params *models.SignInRequest) (
 
 	if !verifyPassword(*params.Password, user.HashedPassword) {
 		return nil, errors.New(ErrInvalidPassword)
+	}
+
+	accessToken, err := generateToken(user)
+	if err != nil {
+		return nil, err
+	}
+
+	return toAuthResponse(user, *accessToken), nil
+}
+
+func (s AuthService) SignInWithApple(ctx context.Context, params *models.SignInAppleRequest) (*models.AuthResponse, error) {
+	// Verify token
+	tokenString := params.Token
+
+	// Parse info
+	token, err := jwt.ParseWithClaims(*tokenString, &apple.AppleClaims{}, apple.AuthFunc)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if user exists
+	claims := token.Claims.(*apple.AppleClaims)
+	email := claims.Email
+
+	user, err := s.Repo.GetByUsername(email)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	// Create new user
+	if user == nil {
+		password := strings.Repeat(claims.Email, 3)
+		hashedPassword, err := hashPassword(password)
+		if err != nil {
+			return nil, err
+		}
+
+		newUser := User{
+			Username:       claims.Email,
+			Email:          &claims.Email,
+			HashedPassword: hashedPassword,
+		}
+
+		user, err = s.Repo.Create(&newUser)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	accessToken, err := generateToken(user)
