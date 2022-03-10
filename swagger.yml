@@ -24,6 +24,7 @@ tags:
   - name: Authentication
   - name: Profile
   - name: Users
+  - name: Leaderboards
 
 paths:
   /signup:
@@ -129,6 +130,40 @@ paths:
         501:
           $ref: "#/responses/501"
 
+  /score:
+    post:
+      operationId: submitScore
+      tags:
+        - Scores
+      security:
+        - Authorization: []
+      description: Submit score
+      responses:
+        200:
+          description: Success
+        400:
+          $ref: "#/responses/400"
+        401:
+          $ref: "#/responses/401"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags:
+        - Leaderboards
+      security:
+        - Authorization: []
+      description: Return leaderboard
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/Leaderboard"
+        400:
+          $ref: "#/responses/400"
+        401:
+          $ref: "#/responses/401"
+
   /users:
     get:
       operationId: listUsers
@@ -213,6 +248,21 @@ definitions:
         type: string
       ext_id:
         type: string
+
+  LeaderboardItem:
+    type: object
+    properties:
+      email:
+        type: string
+      points:
+        type: integer
+      rank:
+        type: integer
+
+  Leaderboard:
+    type: array
+    items:
+      $ref: "#/definitions/LeaderboardItem"
 
 responses:
   400:

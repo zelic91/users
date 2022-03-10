@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username on users(username);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_username ON users(username);
 
 -- migrate:down
 DROP TABLE users;

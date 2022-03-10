@@ -14,6 +14,57 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
+-- Name: leaderboard; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.leaderboard (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    score integer DEFAULT 0,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: leaderboard_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.leaderboard_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: leaderboard_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.leaderboard_id_seq OWNED BY public.leaderboard.id;
+
+
+--
+-- Name: leaderboard_user_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.leaderboard_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: leaderboard_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.leaderboard_user_id_seq OWNED BY public.leaderboard.user_id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -57,10 +108,32 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
+-- Name: leaderboard id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leaderboard ALTER COLUMN id SET DEFAULT nextval('public.leaderboard_id_seq'::regclass);
+
+
+--
+-- Name: leaderboard user_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leaderboard ALTER COLUMN user_id SET DEFAULT nextval('public.leaderboard_user_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- Name: leaderboard leaderboard_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leaderboard
+    ADD CONSTRAINT leaderboard_pkey PRIMARY KEY (id);
 
 
 --
@@ -80,10 +153,25 @@ ALTER TABLE ONLY public.users
 
 
 --
+-- Name: idx_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX idx_user_id ON public.leaderboard USING btree (user_id);
+
+
+--
 -- Name: idx_users_username; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX idx_users_username ON public.users USING btree (username);
+
+
+--
+-- Name: leaderboard fk_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.leaderboard
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -96,4 +184,5 @@ CREATE UNIQUE INDEX idx_users_username ON public.users USING btree (username);
 --
 
 INSERT INTO public.schema_migrations (version) VALUES
-    ('20220228172258');
+    ('20220228172258'),
+    ('20220306170642');
