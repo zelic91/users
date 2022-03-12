@@ -1,8 +1,12 @@
 FROM golang:1.17.8-alpine3.15 AS builder
 WORKDIR /go/src/app
 
+RUN apk add --no-cache make
+
 COPY . .
+RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger@latest
 RUN go get -d -v ./...
+RUN make swagger
 RUN go install -v ./...
 
 #==============
