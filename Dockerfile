@@ -4,9 +4,9 @@ WORKDIR /go/src/app
 RUN apk add --no-cache make
 
 COPY . .
-RUN go get -d -v ./...
 RUN go install -u github.com/go-swagger/go-swagger/cmd/swagger@latest
 RUN make swagger
+RUN go get -d -v ./...
 RUN go install -v ./...
 
 #==============
