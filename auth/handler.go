@@ -1,4 +1,4 @@
-package swagger
+package auth
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 	"zelic91/users/gen/models"
 	"zelic91/users/gen/restapi/operations"
 	"zelic91/users/gen/restapi/operations/authentication"
+	"zelic91/users/shared"
 
 	"github.com/go-openapi/runtime/middleware"
 )
@@ -23,7 +24,7 @@ func SetupAuth(api *operations.UsersAPI, authService AuthService) {
 
 		if err != nil {
 			log.Println(err)
-			return handleError(err)
+			return shared.HandleError(err)
 		}
 
 		log.Println(ctx)
@@ -37,7 +38,7 @@ func SetupAuth(api *operations.UsersAPI, authService AuthService) {
 
 		if err != nil {
 			log.Println(err)
-			return handleError(err)
+			return shared.HandleError(err)
 		}
 
 		log.Println(ctx)
@@ -51,7 +52,7 @@ func SetupAuth(api *operations.UsersAPI, authService AuthService) {
 
 		if err != nil {
 			log.Println(err)
-			return handleError(err)
+			return shared.HandleError(err)
 		}
 
 		log.Println(ctx)

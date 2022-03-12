@@ -138,6 +138,11 @@ paths:
       security:
         - Authorization: []
       description: Submit score
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/ScoreRequest"
       responses:
         200:
           description: Success
@@ -154,6 +159,15 @@ paths:
       security:
         - Authorization: []
       description: Return leaderboard
+      parameters:
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+        - name: offset
+          in: query
+          type: integer
+          format: int32
       responses:
         200:
           description: Success
@@ -249,12 +263,26 @@ definitions:
       ext_id:
         type: string
 
+  ScoreRequest:
+    type: object
+    properties:
+      score:
+        type: integer
+      time:
+        type: string
+      h:
+        type: string
+    required:
+      - score
+      - time
+      - h
+
   LeaderboardItem:
     type: object
     properties:
-      email:
+      username:
         type: string
-      points:
+      score:
         type: integer
       rank:
         type: integer

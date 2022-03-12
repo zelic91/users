@@ -5,7 +5,8 @@ import (
 	"zelic91/users/auth"
 	"zelic91/users/gen/restapi"
 	"zelic91/users/gen/restapi/operations"
-	"zelic91/users/swagger"
+	"zelic91/users/leaderboard"
+	"zelic91/users/shared"
 
 	"github.com/go-openapi/loads"
 	"github.com/go-openapi/runtime"
@@ -15,11 +16,8 @@ import (
 	"github.com/spf13/viper"
 )
 
-func authFunc(token string) (*auth.UserClaims, error) {
-	return &auth.UserClaims{
-		ID:       1234,
-		Username: "tester",
-	}, nil
+func authFunc(token string) (*shared.UserClaims, error) {
+	return shared.ParseToken(token)
 }
 
 func loadConfig() {
@@ -59,13 +57,17 @@ func main() {
 	}
 
 	authRepo := auth.NewRepo(db)
+	leaderboardRepo := leaderboard.NewRepo(db)
 
-	authService := auth.AuthService{
+	authService := auth.Service{
 		Repo: authRepo,
 	}
 
-	swagger.SetupProfile(api)
-	swagger.SetupAuth(api, authService)
+	leaderboardService := leaderboard.NewService(leaderboardRepo)
+
+	auth.SetupProfile(api)
+	auth.SetupAuth(api, authService)
+	leaderboard.SetupLeaderboard(api, leaderboardService)
 
 	server := restapi.NewServer(api)
 	server.Port = 9000

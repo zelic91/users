@@ -21,15 +21,6 @@ type User struct {
 	UpdatedAt      *strfmt.DateTime `db:"updated_at"`
 }
 
-type UserClaims struct {
-	ID       int64  `json:"id"`
-	Username string `json:"username"`
-}
-
-func (c UserClaims) Valid() error {
-	return nil
-}
-
 func NewRepo(db *sqlx.DB) Repo {
 	return Repo{
 		DB: db,

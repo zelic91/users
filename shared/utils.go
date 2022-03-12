@@ -1,4 +1,4 @@
-package swagger
+package shared
 
 import (
 	"net/http"
@@ -20,7 +20,7 @@ func (r *ErrorResponse) WriteResponse(rw http.ResponseWriter, producer runtime.P
 	}
 }
 
-func handleError(err error) middleware.Responder {
+func HandleError(err error) middleware.Responder {
 	return &ErrorResponse{
 		Status:  500,
 		Message: err.Error(),

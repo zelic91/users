@@ -7,12 +7,13 @@ import (
 	"strings"
 	"zelic91/users/apple"
 	"zelic91/users/gen/models"
+	"zelic91/users/shared"
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type AuthService struct {
+type Service struct {
 	Repo Repo
 }
 
@@ -24,11 +25,9 @@ const (
 
 	MinPasswordLength = 6
 	HashCost          = 2
-
-	JWTSecret = "Hello App"
 )
 
-func (s AuthService) SignUp(ctx context.Context, params *models.SignUpRequest) (*models.AuthResponse, error) {
+func (s Service) SignUp(ctx context.Context, params *models.SignUpRequest) (*models.AuthResponse, error) {
 	password := params.Password
 
 	if len(*password) < MinPasswordLength {
@@ -62,7 +61,7 @@ func (s AuthService) SignUp(ctx context.Context, params *models.SignUpRequest) (
 	return toAuthResponse(output, *accessToken), nil
 }
 
-func (s AuthService) SignIn(ctx context.Context, params *models.SignInRequest) (*models.AuthResponse, error) {
+func (s Service) SignIn(ctx context.Context, params *models.SignInRequest) (*models.AuthResponse, error) {
 	user, err := s.Repo.GetByUsername(*params.Username)
 	if err != nil {
 		return nil, err
@@ -80,7 +79,7 @@ func (s AuthService) SignIn(ctx context.Context, params *models.SignInRequest) (
 	return toAuthResponse(user, *accessToken), nil
 }
 
-func (s AuthService) SignInWithApple(ctx context.Context, params *models.SignInAppleRequest) (*models.AuthResponse, error) {
+func (s Service) SignInWithApple(ctx context.Context, params *models.SignInAppleRequest) (*models.AuthResponse, error) {
 	// Verify token
 	tokenString := params.Token
 
@@ -129,20 +128,11 @@ func (s AuthService) SignInWithApple(ctx context.Context, params *models.SignInA
 }
 
 func generateToken(user *User) (*string, error) {
-	key := []byte(JWTSecret)
-	claim := UserClaims{
+	claims := shared.UserClaims{
 		ID:       user.ID,
 		Username: user.Username,
 	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	signedString, err := token.SignedString(key)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &signedString, nil
+	return shared.GenerateToken(&claims)
 }
 
 func hashPassword(rawPassword string) (string, error) {
