@@ -5,10 +5,7 @@ import (
 	"strings"
 
 	"github.com/golang-jwt/jwt"
-)
-
-const (
-	JWTSecret = "Hello App"
+	"github.com/spf13/viper"
 )
 
 type UserClaims struct {
@@ -21,7 +18,7 @@ func (c UserClaims) Valid() error {
 }
 
 func GenerateToken(claims *UserClaims) (*string, error) {
-	key := []byte(JWTSecret)
+	key := []byte(jwtSecret())
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedString, err := token.SignedString(key)
@@ -53,5 +50,9 @@ func keyFunc(token *jwt.Token) (interface{}, error) {
 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 	}
-	return []byte(JWTSecret), nil
+	return []byte(jwtSecret()), nil
+}
+
+func jwtSecret() string {
+	return viper.GetString("JWT_SECRET")
 }
