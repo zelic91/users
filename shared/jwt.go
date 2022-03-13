@@ -11,6 +11,7 @@ import (
 type UserClaims struct {
 	ID       int64  `json:"id"`
 	Username string `json:"username"`
+	App      string `json:"app"`
 }
 
 func (c UserClaims) Valid() error {

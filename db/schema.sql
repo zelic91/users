@@ -84,7 +84,8 @@ CREATE TABLE public.users (
     display_name text,
     hashed_password text,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
-    updated_at timestamp with time zone DEFAULT now() NOT NULL
+    updated_at timestamp with time zone DEFAULT now() NOT NULL,
+    app text NOT NULL
 );
 
 
@@ -160,10 +161,17 @@ CREATE INDEX idx_user_id ON public.leaderboard USING btree (user_id);
 
 
 --
--- Name: idx_users_username; Type: INDEX; Schema: public; Owner: -
+-- Name: idx_users_app; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX idx_users_username ON public.users USING btree (username);
+CREATE INDEX idx_users_app ON public.users USING btree (app);
+
+
+--
+-- Name: idx_users_username_app; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX idx_users_username_app ON public.users USING btree (username, app);
 
 
 --
@@ -185,4 +193,5 @@ ALTER TABLE ONLY public.leaderboard
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20220228172258'),
-    ('20220306170642');
+    ('20220306170642'),
+    ('20220313094700');

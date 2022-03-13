@@ -16,6 +16,7 @@ type User struct {
 	Username       string           `db:"username"`
 	DisplayName    *string          `db:"display_name"`
 	HashedPassword string           `db:"hashed_password"`
+	App            string           `db:"app"`
 	Email          *string          `db:"email"`
 	CreatedAt      *strfmt.DateTime `db:"created_at"`
 	UpdatedAt      *strfmt.DateTime `db:"updated_at"`
@@ -31,13 +32,15 @@ func (r Repo) Create(user *User) (*User, error) {
 	insertSQL := `
 	INSERT INTO users (
 		username,
-		hashed_password
+		hashed_password,
+		app
 	) VALUES (
 		$1,
-		$2
+		$2,
+		$3
 	)`
 
-	_, err := r.DB.Exec(insertSQL, strings.ToLower(user.Username), user.HashedPassword)
+	_, err := r.DB.Exec(insertSQL, strings.ToLower(user.Username), user.HashedPassword, user.App)
 	if err != nil {
 		return nil, err
 	}
@@ -62,10 +65,10 @@ func (r Repo) GetByID(id int64) (*User, error) {
 	return &result, nil
 }
 
-func (r Repo) GetByUsername(username string) (*User, error) {
-	query := "SELECT * FROM users WHERE username = $1 LIMIT 1"
+func (r Repo) GetByUsername(username string, app string) (*User, error) {
+	query := "SELECT * FROM users WHERE username = $1 AND app = $2 LIMIT 1"
 	result := User{}
-	err := r.DB.Get(&result, query, strings.ToLower(username))
+	err := r.DB.Get(&result, query, strings.ToLower(username), strings.ToLower(app))
 	if err != nil {
 		return nil, err
 	}

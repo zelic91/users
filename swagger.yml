@@ -202,9 +202,12 @@ definitions:
         type: string
       password:
         type: string
+      app:
+        type: string
     required:
       - username
       - password
+      - app
 
   SignUpRequest:
     type: object
@@ -215,26 +218,35 @@ definitions:
         type: string
       password_confirmation:
         type: string
+      app:
+        type: string
     required:
       - username
       - password
       - password_confirmation
+      - app
 
   SignInFacebookRequest:
     type: object
     properties:
       token:
         type: string
+      app:
+        type: string
     required:
       - token
+      - app
 
   SignInAppleRequest:
     type: object
     properties:
       token:
         type: string
+      app:
+        type: string
     required:
       - token
+      - app
 
   AuthResponse:
     type: object
@@ -256,6 +268,8 @@ definitions:
     properties:
       id:
         type: integer
+      app:
+        type: string
       username:
         type: string
       email:

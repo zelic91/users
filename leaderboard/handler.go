@@ -12,17 +12,17 @@ import (
 )
 
 type LeaderboardService interface {
-	GetLeaderboard(ctx context.Context, limit *int32, offset *int32) (*models.Leaderboard, error)
+	GetLeaderboard(ctx context.Context, user *shared.UserClaims, limit *int32, offset *int32) (*models.Leaderboard, error)
 	SubmitScore(ctx context.Context, user *shared.UserClaims, params *models.ScoreRequest) error
 }
 
 func SetupLeaderboard(api *operations.UsersAPI, service LeaderboardService) {
-	api.LeaderboardsGetLeaderboardHandler = leaderboards.GetLeaderboardHandlerFunc(func(params leaderboards.GetLeaderboardParams, uc *shared.UserClaims) middleware.Responder {
+	api.LeaderboardsGetLeaderboardHandler = leaderboards.GetLeaderboardHandlerFunc(func(params leaderboards.GetLeaderboardParams, user *shared.UserClaims) middleware.Responder {
 		ctx := params.HTTPRequest.Context()
 		limit := params.Limit
 		offset := params.Offset
 
-		leaderboard, err := service.GetLeaderboard(ctx, limit, offset)
+		leaderboard, err := service.GetLeaderboard(ctx, user, limit, offset)
 
 		if err != nil {
 			return shared.HandleError(err)

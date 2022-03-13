@@ -46,6 +46,7 @@ func (s Service) SignUp(ctx context.Context, params *models.SignUpRequest) (*mod
 	user := User{
 		Username:       *params.Username,
 		HashedPassword: hashedPassword,
+		App:            *params.App,
 	}
 
 	output, err := s.Repo.Create(&user)
@@ -62,7 +63,7 @@ func (s Service) SignUp(ctx context.Context, params *models.SignUpRequest) (*mod
 }
 
 func (s Service) SignIn(ctx context.Context, params *models.SignInRequest) (*models.AuthResponse, error) {
-	user, err := s.Repo.GetByUsername(*params.Username)
+	user, err := s.Repo.GetByUsername(*params.Username, *params.App)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +95,7 @@ func (s Service) SignInWithApple(ctx context.Context, params *models.SignInApple
 	claims := token.Claims.(*apple.AppleClaims)
 	email := claims.Email
 
-	user, err := s.Repo.GetByUsername(email)
+	user, err := s.Repo.GetByUsername(email, *params.App)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
@@ -111,6 +112,7 @@ func (s Service) SignInWithApple(ctx context.Context, params *models.SignInApple
 			Username:       claims.Email,
 			Email:          &claims.Email,
 			HashedPassword: hashedPassword,
+			App:            *params.App,
 		}
 
 		user, err = s.Repo.Create(&newUser)
@@ -131,6 +133,7 @@ func generateToken(user *User) (*string, error) {
 	claims := shared.UserClaims{
 		ID:       user.ID,
 		Username: user.Username,
+		App:      user.App,
 	}
 	return shared.GenerateToken(&claims)
 }

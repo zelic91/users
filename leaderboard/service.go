@@ -21,8 +21,8 @@ func NewService(repo Repo) Service {
 	}
 }
 
-func (s Service) GetLeaderboard(ctx context.Context, limit *int32, offset *int32) (*models.Leaderboard, error) {
-	items, err := s.Repo.GetLeaderboard(limit, offset)
+func (s Service) GetLeaderboard(ctx context.Context, user *shared.UserClaims, limit *int32, offset *int32) (*models.Leaderboard, error) {
+	items, err := s.Repo.GetLeaderboard(user.App, limit, offset)
 
 	if err != nil {
 		return nil, err

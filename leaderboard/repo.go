@@ -33,7 +33,8 @@ func NewRepo(db *sqlx.DB) Repo {
 	}
 }
 
-func (r Repo) GetLeaderboard(limit *int32, offset *int32) ([]*LeaderboardItem, error) {
+func (r Repo) GetLeaderboard(app string, limit *int32, offset *int32) ([]*LeaderboardItem, error) {
+	args := []interface{}{app}
 	query := `
 	SELECT 
 		l.id id, 
@@ -45,19 +46,25 @@ func (r Repo) GetLeaderboard(limit *int32, offset *int32) ([]*LeaderboardItem, e
 		) rank
 	FROM leaderboard AS l
 	INNER JOIN users AS u ON l.user_id = u.id
+	WHERE l.user_id IN (
+		SELECT id FROM users
+		WHERE app = $1
+	)
 	ORDER BY l.score DESC
 	`
 
 	if limit != nil {
-		query = query + ` LIMIT $1`
+		query = query + ` LIMIT $2`
+		args = append(args, limit)
 	}
 
 	if offset != nil {
-		query = query + ` OFFSET $2`
+		query = query + ` OFFSET $3`
+		args = append(args, offset)
 	}
 
 	results := []*LeaderboardItem{}
-	err := r.DB.Select(&results, query)
+	err := r.DB.Select(&results, query, args...)
 
 	if err != nil {
 		return nil, err
