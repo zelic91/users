@@ -6,12 +6,12 @@ RUN apk add --no-cache make
 COPY . .
 RUN go get -u github.com/go-swagger/go-swagger/cmd/swagger@latest
 RUN make swagger
-RUN go get -d -v ./...
-RUN go install -v ./...
+RUN CGO_ENABLED=0 go install -ldflags '-extldflags "-static"' -tags timetzdata
 
 #==============
 FROM scratch
 
 COPY --from=builder /go/bin/users /users
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-CMD ["/users"]
+ENTRYPOINT ["/users"]
