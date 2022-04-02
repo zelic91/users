@@ -23,8 +23,11 @@ func authFunc(token string) (*shared.UserClaims, error) {
 func loadConfig() {
 	viper.SetConfigFile(".env")
 	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal(err)
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			log.Fatal(err)
+		}
 	}
 }
 
