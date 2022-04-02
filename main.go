@@ -25,7 +25,7 @@ func loadConfig() {
 	viper.AddConfigPath(".")
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			log.Fatal(err)
 		}
 	}
