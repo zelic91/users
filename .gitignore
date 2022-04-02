@@ -1,2 +1,3 @@
 gen
+docker-compose.y*ml
 .env
